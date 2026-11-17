@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white text-center fw-bold">
+                <i class="fas fa-edit"></i> تعديل بيانات الدكان
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">اسم الدكان / صاحب الدكان</label>
+                        <input type="text" name="name" class="form-control" value="{{ shop.name }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">رقم الهاتف</label>
+                        <input type="text" name="phone" class="form-control" value="{{ shop.phone|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">الموقع / الحي</label>
+                        <input type="text" name="location" class="form-control" value="{{ shop.location|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea name="notes" class="form-control" rows="2">{{ shop.notes|default:'' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 py-2 fw-bold shadow-sm">
+                        حفظ التعديلات
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

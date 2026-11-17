@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row g-3">
+    <!-- معلومات الدكان الرئيسية -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h4 class="fw-bold mb-1"><i class="fas fa-store"></i> {{ shop.name }}</h4>
+                <p class="mb-1 text-muted">
+                    <i class="fas fa-phone"></i> {{ shop.phone|default:"لا يوجد رقم" }} | 
+                    <i class="fas fa-map-marker-alt"></i> {{ shop.location|default:"لا يوجد موقع" }}
+                </p>
+                <hr class="bg-white">
+                <small class="text-muted">إجمالي الدين القائم</small>
+                <h2 class="fw-bold mb-0 text-danger">{{ shop.total_balance|intcomma }} ج.س</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- أزرار الإجراءات (واتساب، تعديل، حذف) -->
+    <div class="col-12">
+        <div class="row g-2">
+            <div class="col-12">
+                <a href="{{ whatsapp_url }}" target="_blank" class="btn btn-success w-100 fw-bold shadow-sm py-2">
+                    <i class="fab fa-whatsapp"></i> إرسال كشف الحساب عبر الواتساب
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="{% url 'edit_shop' shop.id %}" class="btn btn-outline-dark w-100 btn-sm fw-bold py-2">
+                    <i class="fas fa-edit"></i> تعديل البيانات
+                </a>
+            </div>
+            <div class="col-6">
+                {% if shop.total_balance <= 0 %}
+                <a href="{% url 'delete_shop' shop.id %}" class="btn btn-outline-danger w-100 btn-sm fw-bold py-2" onclick="return confirm('هل أنت متأكد من حذف الدكان؟')">
+                    <i class="fas fa-trash"></i> حذف الدكان
+                </a>
+                {% else %}
+                <button class="btn btn-outline-secondary w-100 btn-sm fw-bold py-2" disabled title="لا يمكن حذف دكان عليه مديونية">
+                    <i class="fas fa-lock"></i> الحذف محظور (عليه دين)
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- سجل الحركات (التوريدات والسداد) -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white fw-bold">
+                <i class="fas fa-history"></i> سجل الحركات (التوريدات والسداد)
+            </div>
+            <div class="card-body p-2">
+                <div class="list-group list-group-flush">
+                    {% for supply in shop.supplies.all %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-success">توريد</span>
+                            <small class="text-muted">{{ supply.date }}</small>
+                            <div class="fw-bold">{{ supply.quantity }} قطعة (المتبقي: {{ supply.remaining_amount|intcomma }} ج.س)</div>
+                        </div>
+                        <span class="text-danger fw-bold">{{ supply.total_amount|intcomma }} ج.س</span>
+                    </div>
+                    {% endfor %}
+
+                    {% for payment in shop.payments.all %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary">سداد ({{ payment.get_method_display }})</span>
+                            <small class="text-muted">{{ payment.date }}</small>
+                        </div>
+                        <span class="text-success fw-bold">-{{ payment.amount|intcomma }} ج.س</span>
+                    </div>
+                    {% empty %}
+                        {% if not shop.supplies.all %}
+                        <div class="text-center p-3 text-muted">لا توجد حركات مسجلة لهذا الدكان حتى الآن.</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

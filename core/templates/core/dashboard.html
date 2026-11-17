@@ -1,0 +1,113 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row g-3">
+    
+    <!-- ملخص اليوم -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center fw-bold">
+                <i class="fas fa-chart-line"></i> ملخص اليوم
+            </div>
+            <div class="card-body">
+                <div class="row text-center g-2">
+                    <div class="col-6">
+                        <div class="p-2 bg-light rounded">
+                            <small class="text-muted">إجمالي العيش الموزع</small>
+                            <h5 class="fw-bold text-dark mb-0">{{ total_bread_today|intcomma|default:0 }} عيشة</h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 bg-light rounded">
+                            <small class="text-muted">التحصيل الكاش</small>
+                            <h5 class="fw-bold text-success mb-0">{{ cash_today|intcomma}} ج.س</h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 bg-light rounded">
+                            <small class="text-muted">التحصيل البنكي (بنكك)</small>
+                            <h5 class="fw-bold text-info mb-0">{{ bankak_today|intcomma}} ج.س</h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 bg-light rounded">
+                            <small class="text-muted">الديون الجديدة اليوم</small>
+                            <h5 class="fw-bold text-danger mb-0">{{ new_debt_today|intcomma}} ج.س</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بطاقة السعر الحالي -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0 bg-dark text-white">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <small class="text-white-50">سعر المائة عيشة (100 قطعة)</small>
+                    <h4 class="mb-0 fw-bold">{% if active_price %}{{ active_price.price_per_100|intcomma }}{% else %}47,000{% endif %} ج.س</h4>
+                </div>
+                <!-- زر يفتح نافذة تغيير السعر المنبثقة -->
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#priceModal">
+                    تعديل السعر
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل السعر المنبثقة (Modal) -->
+    <div class="modal fade text-dark" id="priceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'update_price' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">تعديل سعر المائة عيشة</h5>
+                        <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">السعر الجديد (بالجنيه السوداني):</label>
+                            <input type="number" step="any" name="price_per_100" class="form-control" value="{% if active_price %}{{ active_price.price_per_100|floatformat:0 }}{% else %}47000{% endif %}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary btn-sm">حفظ السعر الجديد</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- أزرار العمليات السريعة (توريد عيش / استلام دين) -->
+    <div class="col-12 my-2">
+        <div class="row g-2">
+            <div class="col-6">
+                <a href="{% url 'new_supply' %}" class="btn btn-success w-100 py-3 shadow-sm fw-bold d-flex flex-column align-items-center justify-content-center" style="border-radius: 15px;">
+                    <i class="fas fa-truck fa-2x mb-1"></i>
+                    <span>تسليم عيش</span>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="{% url 'new_payment' %}" class="btn btn-primary w-100 py-3 shadow-sm fw-bold d-flex flex-column align-items-center justify-content-center" style="border-radius: 15px;">
+                    <i class="fas fa-hand-holding-usd fa-2x mb-1"></i>
+                    <span>استلام دين</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر إرسال التقرير لصاحب المخبز عبر واتساب -->
+    <div class="col-12">
+        <a href="{{ whatsapp_owner_url }}" target="_blank" class="btn btn-success w-100 py-2 fw-bold shadow-sm">
+            <i class="fab fa-whatsapp"></i> إرسال التقرير اليومي لصاحب المخبز عبر الواتساب
+        </a>
+    </div>
+
+</div>
+
+
+{% endblock %}

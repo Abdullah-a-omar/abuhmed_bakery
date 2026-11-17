@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white text-center fw-bold">
+                <i class="fas fa-truck"></i> توريد عيش جديد
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- اختيار الدكان -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">اختر الدكان</label>
+                        <select name="shop" class="form-select" required>
+                            <option value="">-- اختر الدكان --</option>
+                            {% for shop in shops %}
+                                <option value="{{ shop.id }}">{{ shop.name }} (الدين الحالي: {{ shop.total_balance|floatformat:0 }} ج.س)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- كمية العيش -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">كمية العيش (بالقطع)</label>
+                        <input type="number" name="quantity" id="quantity" class="form-control" placeholder="مثال: 200" required oninput="calculateTotal()">
+                    </div>
+
+                    <!-- السعر الحالي -->
+                    <div class="mb-3">
+                        <label class="form-label text-muted">سعر المائة عيشة: <strong>{{ price_value|floatformat:0 }} ج.س</strong></label>
+                    </div>
+
+                    <!-- المدفوع كاش -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المدفوع كاش</label>
+                        <input type="number" step="any" name="paid_cash" id="paid_cash" class="form-control" value="0" oninput="calculateTotal()">
+                    </div>
+
+                    <!-- المدفوع بنكك -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المدفوع بنكك</label>
+                        <input type="number" step="any" name="paid_bankak" id="paid_bankak" class="form-control" value="0" oninput="calculateTotal()">
+                    </div>
+
+                    <!-- ملاحظات -->
+                    <div class="mb-3">
+                        <label class="form-label">ملاحظات (اختياري)</label>
+                        <input type="text" name="notes" class="form-control" placeholder="أي ملاحظات إضافية...">
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold shadow-sm">
+                        تأكيد التوريد وترحيل الحساب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateTotal() {
+        let qty = parseFloat(document.getElementById('quantity').value) || 0;
+        let unitPrice = {{ price_value }};
+        let total = (qty / 100) * unitPrice;
+        let cash = parseFloat(document.getElementById('paid_cash').value) || 0;
+        let bankak = parseFloat(document.getElementById('paid_bankak').value) || 0;
+        let remaining = total - (cash + bankak);
+        // يمكنك إضافة حقل عرض تفاعلي للإجمالي والمتبقي هنا إن أردت
+    }
+</script>
+{% endblock %}

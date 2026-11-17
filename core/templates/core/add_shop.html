@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white text-center fw-bold">
+                <i class="fas fa-store-alt"></i> إضافة دكان جديد
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- اسم الدكان -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">اسم الدكان / صاحب الدكان</label>
+                        <input type="text" name="name" class="form-control" placeholder="مثال: دكان عوض" required>
+                    </div>
+
+                    <!-- رقم الهاتف -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">رقم الهاتف (للواتساب والتواصل)</label>
+                        <input type="text" name="phone" class="form-control" placeholder="مثال: 0912345678">
+                    </div>
+
+                    <!-- الموقع أو الحي -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">الموقع أو الحي</label>
+                        <input type="text" name="location" class="form-control" placeholder="مثال: الثورة الحارة الرابعة">
+                    </div>
+
+                    <!-- ملاحظات -->
+                    <div class="mb-3">
+                        <label class="form-label">ملاحظات إضافية</label>
+                        <textarea name="notes" class="form-control" rows="2" placeholder="أي تفاصيل تخص الدكان..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold shadow-sm">
+                        حفظ وإضافة الدكان
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

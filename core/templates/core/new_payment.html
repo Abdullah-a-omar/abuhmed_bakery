@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center fw-bold">
+                <i class="fas fa-hand-holding-usd"></i> استلام دفعة سداد دين
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">اختر الدكان</label>
+                        <select name="shop" class="form-select" required>
+                            <option value="">-- اختر الدكان --</option>
+                            {% for shop in shops %}
+                                <option value="{{ shop.id }}">{{ shop.name }} (الدين الحالي: {{ shop.total_balance|floatformat:0 }} ج.س)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المبلغ المسدد</label>
+                        <input type="number" step="any" name="amount" class="form-control" placeholder="أدخل المبلغ..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">طريقة الاستلام</label>
+                        <select name="method" class="form-select" required>
+                            <option value="cash">كاش (نقدأ)</option>
+                            <option value="bankak">تحويل بنكي (بنكك)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">ملاحظات</label>
+                        <input type="text" name="notes" class="form-control" placeholder="مثلاً: سداد جزء من حساب الأسبوع الماضي">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
+                        تأكيد واستلام المبلغ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

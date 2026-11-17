@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخبز أبو أحمد - إدارة التوزيع</title>
+    
+    <!-- Bootstrap 5 CSS RTL (محلي) -->
+    <link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}">
+    <!-- Font Awesome للأيقونات (محلي) -->
+    <link rel="stylesheet" href="{% static 'core/css/all.min.css' %}">
+
+    <!-- إعدادات تطبيق الـ PWA للموبايل -->
+    <link rel="manifest" href="{% static 'core/manifest.json' %}">
+    <meta name="theme-color" content="#212529">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Tajawal', sans-serif, Tahoma;
+            padding-bottom: 70px;
+        }
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .nav-link-custom {
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
+            text-decoration: none;
+            padding: 8px 0;
+            display: block;
+        }
+        .nav-link-custom.active {
+            color: #0d6efd;
+            font-weight: bold;
+        }
+        .nav-link-custom i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- رأس الصفحة -->
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1"><i class="fas fa-bread-slice"></i> مخبز أبو أحمد - إدارة التوزيع</span>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحات الديناميكي -->
+    <div class="container my-3">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- شريط التنقل السفلي للموبايل -->
+    <div class="navbar-bottom container-fluid">
+        <div class="row text-center py-1">
+            <div class="col">
+                <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i> الرئيسية
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'shops_list' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'shops_list' %}active{% endif %}">
+                    <i class="fas fa-store"></i> الدكاكين
+                </a>
+            </div>
+            <div class="col">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-file-invoice-dollar"></i> المبيعات
+                </a>
+            </div>
+            <div class="col">
+                <a href="/admin/" class="nav-link-custom">
+                    <i class="fas fa-cogs"></i> الإعدادات
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle المحلي أو عبر CDN -->
+    <script src="{% static 'core/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/core/sw.js')
+            .then(function(reg) {
+                console.log('Service Worker registered!', reg);
+            })
+            .catch(function(err) {
+                console.log('Service Worker registration failed: ', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
